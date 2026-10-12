@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" role="img" aria-labelledby="title desc">
+  <title id="title">PawPal+ Pet Care Class Diagram</title>
+  <desc id="desc">UML class diagram for Owner, Pet, Task, and Scheduler, showing ownership, care tasks, and scheduling dependencies.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#526174"/>
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #172033; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 14px; fill: #526174; }
+      .class-box { fill: #ffffff; stroke: #526174; stroke-width: 2; rx: 10; }
+      .class-header { fill: #e9f3ff; }
+      .class-name { font-size: 20px; font-weight: 700; }
+      .section { font-size: 14px; }
+      .divider { stroke: #cbd5e1; stroke-width: 1.5; }
+      .association { stroke: #526174; stroke-width: 2; fill: none; }
+      .dependency { stroke: #526174; stroke-width: 2; stroke-dasharray: 8 6; fill: none; }
+      .relation-label { font-size: 12px; fill: #526174; }
+      .multiplicity { font-size: 13px; font-weight: 600; fill: #344256; }
+      .note { font-size: 14px; fill: #526174; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="840" fill="#f6f8fb"/>
+  <text x="600" y="43" text-anchor="middle" class="title">PawPal+ Pet Care Class Diagram</text>
+  <text x="600" y="68" text-anchor="middle" class="subtitle">Core information, responsibilities, and relationships</text>
+
+  <!-- Scheduler dependency paths sit behind the class boxes. -->
+  <path class="dependency" d="M 600 575 V 480 H 212 V 367" marker-end="url(#arrow)"/>
+  <path class="dependency" d="M 600 480 V 367" marker-end="url(#arrow)"/>
+  <path class="dependency" d="M 600 480 H 987 V 422" marker-end="url(#arrow)"/>
+  <text x="797" y="505" class="note">Scheduler uses availability, preferences, and care tasks</text>
+
+  <g>
+    <rect x="50" y="105" width="325" height="262" class="class-box"/>
+    <path d="M 60 105 H 365 Q 375 105 375 115 V 150 H 50 V 115 Q 50 105 60 105" class="class-header"/>
+    <text x="212.5" y="135" text-anchor="middle" class="class-name">Owner</text>
+    <line x1="50" y1="150" x2="375" y2="150" class="divider"/>
+    <text x="68" y="176" class="section">
+      <tspan x="68" dy="0">+ name: str</tspan>
+      <tspan x="68" dy="22">+ available_minutes_per_day: int</tspan>
+      <tspan x="68" dy="22">+ preferences: list&lt;str&gt;</tspan>
+    </text>
+    <line x1="50" y1="252" x2="375" y2="252" class="divider"/>
+    <text x="68" y="278" class="section">
+      <tspan x="68" dy="0">+ add_pet(pet: Pet): None</tspan>
+      <tspan x="68" dy="22">+ update_preferences(</tspan>
+      <tspan x="68" dy="20">  preferences: list&lt;str&gt;): None</tspan>
+    </text>
+  </g>
+
+  <g>
+    <rect x="437" y="105" width="325" height="262" class="class-box"/>
+    <path d="M 447 105 H 752 Q 762 105 762 115 V 150 H 437 V 115 Q 437 105 447 105" class="class-header"/>
+    <text x="599.5" y="135" text-anchor="middle" class="class-name">Pet</text>
+    <line x1="437" y1="150" x2="762" y2="150" class="divider"/>
+    <text x="455" y="176" class="section">
+      <tspan x="455" dy="0">+ name: str</tspan>
+      <tspan x="455" dy="22">+ species: str</tspan>
+      <tspan x="455" dy="22">+ breed: str</tspan>
+      <tspan x="455" dy="22">+ age_years: int</tspan>
+    </text>
+    <line x1="437" y1="274" x2="762" y2="274" class="divider"/>
+    <text x="455" y="300" class="section">
+      <tspan x="455" dy="0">+ add_task(task: Task): None</tspan>
+      <tspan x="455" dy="22">+ list_pending_tasks(): list&lt;Task&gt;</tspan>
+    </text>
+  </g>
+
+  <g>
+    <rect x="825" y="105" width="325" height="317" class="class-box"/>
+    <path d="M 835 105 H 1140 Q 1150 105 1150 115 V 150 H 825 V 115 Q 825 105 835 105" class="class-header"/>
+    <text x="987.5" y="135" text-anchor="middle" class="class-name">Task</text>
+    <line x1="825" y1="150" x2="1150" y2="150" class="divider"/>
+    <text x="843" y="176" class="section">
+      <tspan x="843" dy="0">+ title: str</tspan>
+      <tspan x="843" dy="22">+ category: str</tspan>
+      <tspan x="843" dy="22">+ duration_minutes: int</tspan>
+      <tspan x="843" dy="22">+ priority: str</tspan>
+      <tspan x="843" dy="22">+ due_time: str</tspan>
+      <tspan x="843" dy="22">+ completed: bool</tspan>
+      <tspan x="843" dy="22">+ scheduled_time: str</tspan>
+    </text>
+    <line x1="825" y1="328" x2="1150" y2="328" class="divider"/>
+    <text x="843" y="354" class="section">
+      <tspan x="843" dy="0">+ mark_completed(): None</tspan>
+      <tspan x="843" dy="22">+ is_due(): bool</tspan>
+    </text>
+  </g>
+
+  <g>
+    <rect x="437" y="575" width="325" height="213" class="class-box"/>
+    <path d="M 447 575 H 752 Q 762 575 762 585 V 620 H 437 V 585 Q 437 575 447 575" class="class-header"/>
+    <text x="599.5" y="605" text-anchor="middle" class="class-name">Scheduler</text>
+    <line x1="437" y1="620" x2="762" y2="620" class="divider"/>
+    <text x="455" y="650" class="section" fill="#526174">Coordinates the owner's daily care plan</text>
+    <line x1="437" y1="672" x2="762" y2="672" class="divider"/>
+    <text x="455" y="698" class="section">
+      <tspan x="455" dy="0">+ generate_daily_plan(owner: Owner):</tspan>
+      <tspan x="455" dy="20">  list&lt;Task&gt;</tspan>
+      <tspan x="455" dy="22">+ explain_plan(plan: list&lt;Task&gt;): str</tspan>
+    </text>
+  </g>
+
+  <path class="association" d="M 375 238 H 437"/>
+  <polygon points="375,230 383,238 375,246 367,238" fill="#ffffff" stroke="#526174" stroke-width="2"/>
+  <text x="405" y="222" text-anchor="middle" class="relation-label">cares for</text>
+  <text x="390" y="260" text-anchor="middle" class="multiplicity">1</text>
+  <text x="422" y="260" text-anchor="middle" class="multiplicity">0..*</text>
+
+  <path class="association" d="M 762 238 H 825"/>
+  <polygon points="762,230 770,238 762,246 754,238" fill="#526174" stroke="#526174" stroke-width="2"/>
+  <text x="793.5" y="222" text-anchor="middle" class="relation-label">has care tasks</text>
+  <text x="777" y="260" text-anchor="middle" class="multiplicity">1</text>
+  <text x="810" y="260" text-anchor="middle" class="multiplicity">0..*</text>
+</svg>

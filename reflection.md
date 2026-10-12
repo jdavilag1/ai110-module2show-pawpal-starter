@@ -4,8 +4,8 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+- Using the four classes, owner pet, and task, I asked AI to create a mermaid diagram.
+
 
 **b. Design changes**
 
