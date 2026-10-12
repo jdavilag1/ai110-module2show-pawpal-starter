@@ -3,8 +3,10 @@ classDiagram
         +name: str
         +available_minutes_per_day: int
         +preferences: list~str~
+        +pets: list~Pet~
         +add_pet(pet: Pet): None
         +update_preferences(preferences: list~str~): None
+        +get_all_tasks(): list of (Pet, Task)
     }
 
     class Pet {
@@ -12,29 +14,34 @@ classDiagram
         +species: str
         +breed: str
         +age_years: int
+        +tasks: list~Task~
         +add_task(task: Task): None
-        +list_pending_tasks(): list~Task~
+        +list_pending_tasks(on_date: date): list~Task~
     }
 
     class Task {
-        +title: str
-        +category: str
+        +description: str
         +duration_minutes: int
-        +priority: str
-        +due_time: str
+        +frequency: once | daily | weekly
+        +priority: low | medium | high
+        +due_time: time | None
+        +category: str
         +completed: bool
-        +scheduled_time: str
-        +mark_completed(): None
-        +is_due(): bool
+        +scheduled_time: time | None
+        +last_completed_on: date | None
+        +mark_completed(on_date: date): None
+        +is_due(on_date: date): bool
     }
 
     class Scheduler {
-        +generate_daily_plan(owner: Owner): list~Task~
-        +explain_plan(plan: list~Task~): str
+        +start_time: time
+        +unscheduled_tasks: list of (Pet, Task, str)
+        +generate_daily_plan(owner: Owner, on_date: date): list of (Pet, Task)
+        +explain_plan(plan: list of (Pet, Task)): str
     }
 
     Owner "1" o-- "0..*" Pet : cares for
     Pet "1" *-- "0..*" Task : has care tasks
-    Scheduler ..> Owner : reads availability and preferences
-    Scheduler ..> Pet : plans care for
-    Scheduler ..> Task : selects and orders
+    Scheduler ..> Owner : gets all pet task pairs
+    Scheduler ..> Pet : assigns tasks
+    Scheduler ..> Task : filters, prioritizes, schedules

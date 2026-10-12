@@ -76,10 +76,10 @@ Sample test output:
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | `Scheduler._sort_key` | Earlier due times first, then priority, owner preference, and stable pet/task names. |
+| Filtering | `Task.is_due`, `Scheduler.generate_daily_plan` | Excludes completed one-off tasks and recurring tasks not yet due; skips tasks that exceed the shared owner time budget. |
+| Conflict handling | `Scheduler.generate_daily_plan` | Schedules sequentially from the start time and skips tasks that cannot finish by their due time or before day's end. |
+| Recurring tasks | `Task.is_due`, `Task.mark_completed` | Supports once, daily, and weekly (every seven days from completion) frequencies. |
 
 ## 📸 Demo Walkthrough
 

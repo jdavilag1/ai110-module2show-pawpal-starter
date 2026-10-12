@@ -9,8 +9,7 @@
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+My design changed during planning when i made the intial UML better. i added explicit lists so an owner cna have multiplepets and each pet have their own designated care tasks. i also used dataclasses like owner, pet, and task objects. i still need to make sure the scheduler treats the owner's avaialble time as a shared daily limit when planning for multiple pets
 
 ---
 
