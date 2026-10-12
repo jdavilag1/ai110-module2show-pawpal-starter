@@ -4,12 +4,11 @@
 
 **a. Initial design**
 
-- Using the four classes, owner pet, and task, I asked AI to create a mermaid diagram.
-
+- My first diagram had four classes: Owner, Pet, Task, and Scheduler. Owner keeps the pets, each pet keeps its tasks, and Scheduler makes a daily plan.
 
 **b. Design changes**
 
-My design changed during planning when i made the intial UML better. i added explicit lists so an owner cna have multiplepets and each pet have their own designated care tasks. i also used dataclasses like owner, pet, and task objects. i still need to make sure the scheduler treats the owner's avaialble time as a shared daily limit when planning for multiple pets
+I added methods for filtering and sorting tasks, checking time conflicts, and creating the next occurrence of a recurring task. I also made the available time one shared limit for all the owner's pets.
 
 ---
 
@@ -17,14 +16,14 @@ My design changed during planning when i made the intial UML better. i added exp
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+- The scheduler checks due times, priority, owner preferences, and the owner's available minutes. Tasks that do not fit are listed as skipped.
+- I put due times and high priority tasks first because they are the most important to finish on time.
 
 **b. Tradeoffs**
 
-The conflict check only reports tasks with the exact same scheduled start time; it does not check whether tasks with different start times overlap because of their durations. This keeps conflict detection lightweight and easy to understand, and the daily scheduler already places selected tasks sequentially. A future version could detect interval overlaps if schedules allow fixed or parallel appointments.
+The conflict check only reports tasks with the exact same scheduled start time. It does not check whether tasks with different start times overlap because of their durations. This keeps the check simple. A future version could check for overlapping time ranges.
 
-The check groups scheduled tasks by start time in one pass, which is easier to follow than comparing every pair and runs in O(n) time. Sorting the small set of conflicting times for predictable warning order adds O(k log k), where k is the number of distinct scheduled times.
+The check groups tasks by start time in one pass instead of comparing every pair. This is easier to read and works efficiently for a small schedule.
 
 ---
 
@@ -32,13 +31,12 @@ The check groups scheduled tasks by start time in one pass, which is easier to f
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+- I used the AI coding assistant to brainstorm the UML, write class code, add tests, connect the Streamlit UI, and update the documentation.
+- Asking it to explain a specific feature and then run tests was most helpful.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+- I changed the first conflict-check idea so it only gives a warning and does not stop the program. I ran the tests and the command-line demo to check it.
 
 ---
 
@@ -46,13 +44,13 @@ The check groups scheduled tasks by start time in one pass, which is easier to f
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+- I tested adding pets and tasks, completion, recurring tasks, sorting, filtering, schedule limits, due times, and conflict warnings.
+- These tests help catch mistakes in the main behaviors.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+- I am fairly confident in the tested cases because all 10 tests pass.
+- I would next test overlapping task durations and unusual time limits.
 
 ---
 
@@ -60,12 +58,13 @@ The check groups scheduled tasks by start time in one pass, which is easier to f
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+- I am most satisfied that the scheduler works for more than one pet and explains tasks it could not schedule.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+- I would improve conflict detection so it checks overlapping durations, not just exact start times.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+- Separate chat sessions for the diagram, implementation, tests, and UI helped me focus on one phase at a time.
+- I learned that I need to guide and check the AI's work. I am still responsible for deciding what fits my design and testing that it works.

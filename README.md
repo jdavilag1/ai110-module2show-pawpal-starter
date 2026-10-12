@@ -87,28 +87,49 @@ collected 10 items
 
 tests\test_pawpal_system.py ..........                                   [100%]
 
-============================== 10 passed in 0.03s ==============================
+============================== 10 passed in 0.04s ==============================
 ```
 
 **Confidence level:** ★★★★☆ (4/5). The 10 tests cover the main model and scheduling behaviors, including recurring tasks and conflicts. This is good confidence in the tested cases, but not a guarantee against untested edge cases or broader real-world scheduling needs.
 
-## 📐 Smarter Scheduling
+## Features
 
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Task sorting | `Scheduler.sort_tasks`, `Scheduler._sort_key` | `sort_tasks` uses a lambda key on zero-padded `HH:MM` due-time strings; daily scheduling then considers priority, owner preference, and stable names. |
-| Filtering | `Scheduler.filter_tasks`, `Task.is_due`, `Scheduler.generate_daily_plan` | Filters by completion status or pet name; excludes tasks not due and skips tasks that exceed the shared owner time budget. |
-| Conflict detection | `Scheduler.detect_conflicts` | Returns non-fatal warnings for tasks with identical scheduled start times, whether they belong to the same pet or different pets. It does not detect duration overlaps. |
-| Recurring tasks | `Owner.mark_task_complete`, `Pet.mark_task_complete`, `Task.mark_completed`, `Task.is_due` | Completing a daily or weekly occurrence adds a new task instance due on the next day or in seven days; once tasks do not recur. |
+- **Final class diagram:** [diagrams/uml_final.mmd](diagrams/uml_final.mmd) shows the implemented classes, methods, and relationships. The implementation is in [diagrams/pawpal_system.py](diagrams/pawpal_system.py), and the interactive interface is in [app.py](app.py).
+- **Pet and care tracking:** Add multiple pets and assign each one tasks with duration, due time, priority, and frequency.
+- **Due-time sorting:** `Scheduler.sort_tasks()` sorts tasks by their zero-padded `HH:MM` due time, with tasks that have no due time last.
+- **Task filtering:** `Scheduler.filter_tasks()` filters by pet name, completion status, or both.
+- **Daily planning:** `Scheduler.generate_daily_plan()` orders due tasks using due times, priority, owner preferences, and pet/task names while observing one shared owner time budget.
+- **Conflict warnings:** `Scheduler.detect_conflicts()` identifies tasks assigned the exact same start time. The Streamlit UI uses a warning message that names the conflicting tasks so the owner can review them. It does not detect duration overlaps.
+- **Recurring care:** Completing a daily or weekly task through `Owner.mark_task_complete()` or `Pet.mark_task_complete()` marks that occurrence done and creates a separate next occurrence.
+- **Plan explanations:** The scheduler reports planned tasks and why tasks did not fit; the Streamlit interface displays the results and warnings.
 
-## 📸 Demo Walkthrough
+## Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+1. Enter or update the owner's name, daily available minutes, and preferred task categories.
+2. Add pets using the pet form. The list updates after submission.
+3. Choose a pet and add care tasks with a duration, priority, frequency, category, and optional “complete by” time.
+4. Use the All Tasks filters to view tasks for one pet or filter to pending/completed tasks. The table is sorted by due time.
+5. Mark tasks complete from a pet's task panel. Daily and weekly tasks create a new occurrence; one-time tasks stay completed.
+6. Select **Generate schedule** to see today's plan, skipped-task explanations, and a conflict warning if two tasks share an exact start time.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+Run `python main.py` from the repository root for the command-line demonstration. Sample output:
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+```
+Tasks Sorted by Due Time
+07:30 - Breakfast
+08:15 - Give medication
+09:00 - Morning walk
+
+Pending Tasks for Mochi
+- Mochi: Morning walk
+- Mochi: Breakfast
+
+Completed Breakfast; next daily occurrence is due after 2026-10-11.
+
+Conflict Check
+Warning: 08:00 conflict: Morning walk for Mochi, Give medication for Biscuit are scheduled at the same time.
+
+Today's Schedule
+08:00 - Give medication for Biscuit (5 min, high priority)
+08:05 - Morning walk for Mochi (25 min, high priority)
+```

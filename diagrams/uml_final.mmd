@@ -1,0 +1,58 @@
+classDiagram
+    class Owner {
+        +name: str
+        +available_minutes_per_day: int
+        +preferences: list~str~
+        +pets: list~Pet~
+        +add_pet(pet: Pet): None
+        +update_preferences(preferences: list~str~): None
+        +get_all_tasks(): list of (Pet, Task)
+        +mark_task_complete(task: Task, on_date: date): Task | None
+    }
+
+    class Pet {
+        +name: str
+        +species: str
+        +breed: str
+        +age_years: int
+        +tasks: list~Task~
+        +add_task(task: Task): None
+        +list_pending_tasks(on_date: date): list~Task~
+        +mark_task_complete(task: Task, on_date: date): Task | None
+    }
+
+    class Task {
+        +description: str
+        +duration_minutes: int
+        +frequency: once | daily | weekly
+        +priority: low | medium | high
+        +due_time: time | None
+        +category: str
+        +completed: bool
+        +scheduled_time: time | None
+        +last_completed_on: date | None
+        +title: str
+        +time: str | None
+        +mark_completed(on_date: date): Task | None
+        +is_due(on_date: date): bool
+    }
+
+    class Scheduler {
+        +start_time: time
+        +unscheduled_tasks: list of (Pet, Task, str)
+        +sort_tasks(tasks): list~Task~
+        +filter_tasks(owner, completed, pet_name): list of (Pet, Task)
+        +detect_conflicts(assignments): list~str~
+        +generate_daily_plan(owner, on_date): list of (Pet, Task)
+        +explain_plan(plan): str
+        -_sort_key(pet, task, owner): tuple
+        -_add_minutes(start, minutes): time
+    }
+
+    Owner "1" o-- "0..*" Pet : owns
+    Pet "1" *-- "0..*" Task : maintains task occurrences
+    Owner ..> Pet : completes owned task through pet
+    Owner ..> Task : aggregates tasks with pet identity
+    Scheduler ..> Owner : reads household tasks and constraints
+    Scheduler ..> Task : sorts, filters, and detects start-time conflicts
+    Scheduler ..> Pet : retains pet identity in the daily plan

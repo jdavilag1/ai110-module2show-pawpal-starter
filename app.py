@@ -110,6 +110,54 @@ if owner.pets:
             st.session_state.daily_plan = None
             st.success(f"Added task for {selected_pet.name}.")
 
+    st.subheader("All Tasks")
+    filter_col, status_col = st.columns(2)
+    with filter_col:
+        selected_pet_name = st.selectbox(
+            "Filter by pet",
+            options=["All pets", *dict.fromkeys(pet.name for pet in owner.pets)],
+            key="task_pet_filter",
+        )
+    with status_col:
+        status_filter = st.selectbox(
+            "Filter by status",
+            options=["All", "Pending", "Completed"],
+            key="task_status_filter",
+        )
+
+    completed_filter = {
+        "All": None,
+        "Pending": False,
+        "Completed": True,
+    }[status_filter]
+    filtered_tasks = scheduler.filter_tasks(
+        owner,
+        completed=completed_filter,
+        pet_name=None if selected_pet_name == "All pets" else selected_pet_name,
+    )
+    sorted_tasks = scheduler.sort_tasks(task for _, task in filtered_tasks)
+    task_by_id = {id(task): (pet, task) for pet, task in filtered_tasks}
+    sorted_assignments = [task_by_id[id(task)] for task in sorted_tasks]
+
+    if sorted_assignments:
+        st.caption("Sorted by due time; tasks without a due time appear last.")
+        st.table(
+            [
+                {
+                    "Pet": pet.name,
+                    "Task": task.description,
+                    "Due by": task.time or "Not set",
+                    "Duration (min)": task.duration_minutes,
+                    "Priority": task.priority,
+                    "Frequency": task.frequency,
+                    "Status": "Completed" if task.completed else "Pending",
+                }
+                for pet, task in sorted_assignments
+            ]
+        )
+    else:
+        st.info("No tasks match these filters.")
+
     for pet_index, pet in enumerate(owner.pets):
         with st.expander(f"{pet.name}'s tasks", expanded=True):
             if pet.tasks:
@@ -160,6 +208,16 @@ if st.button("Generate schedule", disabled=not owner.pets):
         owner,
         on_date=date.today(),
     )
+    st.session_state.conflict_warnings = scheduler.detect_conflicts(owner.get_all_tasks())
 
 if st.session_state.daily_plan is not None:
     st.text(scheduler.explain_plan(st.session_state.daily_plan))
+    conflict_warnings = st.session_state.get("conflict_warnings", [])
+    if conflict_warnings:
+        st.warning(
+            "Some tasks have the same scheduled start time. Review the tasks below "
+            "and adjust the plan so your pet care does not overlap:\n\n"
+            + "\n".join(f"- {warning}" for warning in conflict_warnings)
+        )
+    else:
+        st.success("No exact start-time conflicts found in today's schedule.")
