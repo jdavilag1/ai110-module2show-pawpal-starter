@@ -4,6 +4,7 @@ classDiagram
         +available_minutes_per_day: int
         +preferences: list~str~
         +pets: list~Pet~
+        +mark_task_complete(task: Task, on_date: date): Task | None
         +add_pet(pet: Pet): None
         +update_preferences(preferences: list~str~): None
         +get_all_tasks(): list of (Pet, Task)
@@ -17,6 +18,7 @@ classDiagram
         +tasks: list~Task~
         +add_task(task: Task): None
         +list_pending_tasks(on_date: date): list~Task~
+        +mark_task_complete(task: Task, on_date: date): Task | None
     }
 
     class Task {
@@ -29,13 +31,17 @@ classDiagram
         +completed: bool
         +scheduled_time: time | None
         +last_completed_on: date | None
-        +mark_completed(on_date: date): None
+        +time: str | None
+        +mark_completed(on_date: date): Task | None
         +is_due(on_date: date): bool
     }
 
     class Scheduler {
         +start_time: time
         +unscheduled_tasks: list of (Pet, Task, str)
+        +sort_tasks(tasks): list~Task~
+        +filter_tasks(owner, completed, pet_name): list of (Pet, Task)
+        +detect_conflicts(assignments): list~str~
         +generate_daily_plan(owner: Owner, on_date: date): list of (Pet, Task)
         +explain_plan(plan: list of (Pet, Task)): str
     }

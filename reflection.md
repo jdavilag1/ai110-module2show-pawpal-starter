@@ -22,8 +22,9 @@ My design changed during planning when i made the intial UML better. i added exp
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+The conflict check only reports tasks with the exact same scheduled start time; it does not check whether tasks with different start times overlap because of their durations. This keeps conflict detection lightweight and easy to understand, and the daily scheduler already places selected tasks sequentially. A future version could detect interval overlaps if schedules allow fixed or parallel appointments.
+
+The check groups scheduled tasks by start time in one pass, which is easier to follow than comparing every pair and runs in O(n) time. Sorting the small set of conflicting times for predictable warning order adds O(k log k), where k is the number of distinct scheduled times.
 
 ---
 

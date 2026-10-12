@@ -21,6 +21,7 @@ def main() -> None:
             priority="high",
             due_time=time(9, 0),
             category="exercise",
+            scheduled_time=time(8, 0),
         )
     )
     dog.add_task(
@@ -29,7 +30,7 @@ def main() -> None:
             duration_minutes=10,
             frequency="daily",
             priority="high",
-            due_time=time(8, 45),
+            due_time=time(7, 30),
             category="feeding",
         )
     )
@@ -41,6 +42,7 @@ def main() -> None:
             priority="high",
             due_time=time(8, 15),
             category="medication",
+            scheduled_time=time(8, 0),
         )
     )
 
@@ -48,9 +50,41 @@ def main() -> None:
     owner.add_pet(cat)
 
     scheduler = Scheduler(start_time=time(8, 0))
+    all_tasks = [task for _, task in owner.get_all_tasks()]
+    sorted_tasks = scheduler.sort_tasks(all_tasks)
+    pending_mochi_tasks = scheduler.filter_tasks(
+        owner,
+        completed=False,
+        pet_name="Mochi",
+    )
+
+    print("Tasks Sorted by Due Time")
+    for task in sorted_tasks:
+        print(f"{task.time or 'No due time'} - {task.description}")
+
+    print("\nPending Tasks for Mochi")
+    for pet, task in pending_mochi_tasks:
+        print(f"- {pet.name}: {task.description}")
+
+    breakfast = next(task for task in all_tasks if task.description == "Breakfast")
+    next_breakfast = owner.mark_task_complete(breakfast, on_date=date.today())
+    if next_breakfast is not None:
+        print(
+            f"\nCompleted Breakfast; next {next_breakfast.frequency} occurrence "
+            f"is due after {next_breakfast.last_completed_on:%Y-%m-%d}."
+        )
+
+    print("\nConflict Check")
+    conflict_warnings = scheduler.detect_conflicts(owner.get_all_tasks())
+    if conflict_warnings:
+        for warning in conflict_warnings:
+            print(warning)
+    else:
+        print("No exact start-time conflicts found.")
+
     plan = scheduler.generate_daily_plan(owner, on_date=date.today())
 
-    print("Today's Schedule")
+    print("\nToday's Schedule")
     if plan:
         for pet, task in plan:
             start_at = task.scheduled_time.strftime("%H:%M")

@@ -47,38 +47,59 @@ pip install -r requirements.txt
 Run the demo from the repository root with `python main.py`. Sample terminal output:
 
 ```
+Tasks Sorted by Due Time
+07:30 - Breakfast
+08:15 - Give medication
+09:00 - Morning walk
+
+Pending Tasks for Mochi
+- Mochi: Morning walk
+- Mochi: Breakfast
+
+Completed Breakfast; next daily occurrence is due after 2026-10-11.
+
+Conflict Check
+Warning: 08:00 conflict: Morning walk for Mochi, Give medication for Biscuit are scheduled at the same time.
+
 Today's Schedule
 08:00 - Give medication for Biscuit (5 min, high priority)
-08:05 - Breakfast for Mochi (10 min, high priority)
-08:15 - Morning walk for Mochi (25 min, high priority)
+08:05 - Morning walk for Mochi (25 min, high priority)
 ```
 
 ## 🧪 Testing PawPal+
 
+Run the full test suite from the repository root:
+
 ```bash
-# Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
+python -m pytest
 ```
 
-Sample test output:
+The tests cover task completion and addition, owner-to-pet/task relationships, recurring task creation, sorting and filtering, shared scheduling time limits, due-time constraints, and exact-time conflict warnings for tasks belonging to the same or different pets.
+
+Successful terminal output:
 
 ```
-# Paste your pytest output here
+============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\Davila\OneDrive\ai110-module2show-pawpal-starter
+plugins: anyio-4.15.1
+collected 10 items
+
+tests\test_pawpal_system.py ..........                                   [100%]
+
+============================== 10 passed in 0.03s ==============================
 ```
+
+**Confidence level:** ★★★★☆ (4/5). The 10 tests cover the main model and scheduling behaviors, including recurring tasks and conflicts. This is good confidence in the tested cases, but not a guarantee against untested edge cases or broader real-world scheduling needs.
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
-
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | `Scheduler._sort_key` | Earlier due times first, then priority, owner preference, and stable pet/task names. |
-| Filtering | `Task.is_due`, `Scheduler.generate_daily_plan` | Excludes completed one-off tasks and recurring tasks not yet due; skips tasks that exceed the shared owner time budget. |
-| Conflict handling | `Scheduler.generate_daily_plan` | Schedules sequentially from the start time and skips tasks that cannot finish by their due time or before day's end. |
-| Recurring tasks | `Task.is_due`, `Task.mark_completed` | Supports once, daily, and weekly (every seven days from completion) frequencies. |
+| Task sorting | `Scheduler.sort_tasks`, `Scheduler._sort_key` | `sort_tasks` uses a lambda key on zero-padded `HH:MM` due-time strings; daily scheduling then considers priority, owner preference, and stable names. |
+| Filtering | `Scheduler.filter_tasks`, `Task.is_due`, `Scheduler.generate_daily_plan` | Filters by completion status or pet name; excludes tasks not due and skips tasks that exceed the shared owner time budget. |
+| Conflict detection | `Scheduler.detect_conflicts` | Returns non-fatal warnings for tasks with identical scheduled start times, whether they belong to the same pet or different pets. It does not detect duration overlaps. |
+| Recurring tasks | `Owner.mark_task_complete`, `Pet.mark_task_complete`, `Task.mark_completed`, `Task.is_due` | Completing a daily or weekly occurrence adds a new task instance due on the next day or in seven days; once tasks do not recur. |
 
 ## 📸 Demo Walkthrough
 
